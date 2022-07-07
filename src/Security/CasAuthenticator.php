@@ -14,11 +14,13 @@ use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use UnivLorraine\Bundle\SymfonyCasBundle\Event\CasAuthenticationFailureEvent;
 
-class CasAuthenticator extends AbstractAuthenticator
+class CasAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
+    protected string $cas_login_url;
     protected string $cas_service_validate_url;
     protected string $cas_ticket_parameter;
     protected string $cas_service_parameter;
@@ -29,6 +31,7 @@ class CasAuthenticator extends AbstractAuthenticator
     private EventDispatcherInterface $eventDispatcher;
 
     public function __construct($config, HttpClientInterface $httpClient, EventDispatcherInterface $eventDispatcher) {
+        $this->cas_login_url = $config['cas_login_url'];
         $this->cas_service_validate_url = $config['cas_service_validate_url'];
         $this->cas_service_parameter = $config['cas_service_parameter'];
         $this->cas_ticket_parameter = $config['cas_ticket_parameter'];
@@ -110,4 +113,8 @@ class CasAuthenticator extends AbstractAuthenticator
     }
 
 
+    public function start(Request $request, AuthenticationException $authException = null): Response
+    {
+        return new RedirectResponse($this->cas_login_url.'?'.$this->cas_service_parameter.'='.urlencode($request->getUri()));
+    }
 }

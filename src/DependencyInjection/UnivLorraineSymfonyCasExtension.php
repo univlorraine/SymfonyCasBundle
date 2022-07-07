@@ -19,10 +19,6 @@ class UnivLorraineSymfonyCasExtension extends Extension
             'UnivLorraine\Bundle\SymfonyCasBundle\Security\CasAuthenticator');
         $authenticator->setArguments(array($config));
 
-        $entrypoint = $container->autowire('univ_lorraine_symfony_cas.entrypoint',
-        'UnivLorraine\Bundle\SymfonyCasBundle\Security\CasAuthenticationEntryPoint');
-        $entrypoint->setArguments(array($config));
-
         $container->register('univ_lorraine_symfony_cas.user_provider',
          'UnivLorraine\Bundle\SymfonyCasBundle\Security\User\CasUserProvider');
     }
