@@ -1,0 +1,28 @@
+{
+  "name": "univlorraine/symfony-cas-bundle",
+  "type": "symfony-bundle",
+  "description": "Cas bundle for Symfony >=5.4",
+  "keywords": ["CAS", "SSO", "Authentication", "Université de Lorraine", "Symfony"],
+  "license": "CECILL-C",
+  "authors": [
+    {
+      "name": "Benjamin Lemoine",
+      "email": "benjamin.lemoine@univ-lorraine.fr"
+    },
+    {
+      "name": "Stéphane Muller",
+      "email": "stephane.muller@univ-lorraine.fr"
+    }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "symfony/framework-bundle": "^5.4|^6.0",
+    "symfony/security-bundle": "5.4|^6.0",
+    "symfony/http-client": "5.4|^6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "UnivLorraine\\Bundle\\SymfonyCasBundle\\": "src/"
+    }
+  }
+}
