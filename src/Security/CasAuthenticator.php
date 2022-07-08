@@ -3,7 +3,6 @@
 namespace UnivLorraine\Bundle\SymfonyCasBundle\Security;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +14,9 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use UnivLorraine\Bundle\SymfonyCasBundle\Event\CasAuthenticationFailureEvent;
 
@@ -43,6 +45,15 @@ class CasAuthenticator extends AbstractAuthenticator implements AuthenticationEn
     }
 
     /**
+     * @inheritDoc
+     */
+    public function start(Request $request, AuthenticationException $authException = null): Response
+    {
+        // Start authentication. Redirect to CAS Login page
+        return new RedirectResponse($this->cas_login_url.'?'.$this->cas_service_parameter.'='.urlencode($request->getUri()));
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function supports(Request $request): ?bool
@@ -56,21 +67,25 @@ class CasAuthenticator extends AbstractAuthenticator implements AuthenticationEn
     public function authenticate(Request $request): Passport
     {
         // Request CAS Server
-        $response = $this->httpClient->request('GET', $this->cas_service_validate_url, [
-            'query' => [
-                $this->cas_ticket_parameter => $request->get($this->cas_ticket_parameter),
-                $this->cas_service_parameter => $this->cleanTicketInUri($request),
-            ],
-        ]);
+        try {
+            $response = $this->httpClient->request('GET', $this->cas_service_validate_url, [
+                'query' => [
+                    $this->cas_ticket_parameter => $request->get($this->cas_ticket_parameter),
+                    $this->cas_service_parameter => $this->cleanTicketInUri($request),
+                ],
+            ]);
 
-        // Parse response content in xml object
-        $xml = new \SimpleXMLElement($response->getContent(), 0, false, $this->xml_cas_namespace, true);
+            // Parse response content in xml object
+            $xml = new \SimpleXMLElement($response->getContent(), 0, false, $this->xml_cas_namespace, true);
 
-        if ($response->getStatusCode() === Response::HTTP_OK && isset($xml->authenticationSuccess)) {
-            return new SelfValidatingPassport(
-                new UserBadge((string) $xml->authenticationSuccess->user),
-                []
-            );
+            if ($response->getStatusCode() === Response::HTTP_OK && isset($xml->authenticationSuccess)) {
+                return new SelfValidatingPassport(
+                    new UserBadge((string)$xml->authenticationSuccess->user),
+                    []
+                );
+            }
+        } catch (TransportExceptionInterface | ClientExceptionInterface | RedirectionExceptionInterface $e) {
+            throw new AuthenticationException('Cannot contact CAS Server');
         }
 
         throw new AuthenticationException('CAS Authentication fail !');
@@ -92,9 +107,9 @@ class CasAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         $errorMessage = strtr($exception->getMessageKey(), $exception->getMessageData());
 
         if ($exception instanceof BadCredentialsException) {
-            $response = new JsonResponse($errorMessage, Response::HTTP_FORBIDDEN);
+            $response = new Response($errorMessage, Response::HTTP_FORBIDDEN);
         } else {
-            $response = new JsonResponse($errorMessage, Response::HTTP_UNAUTHORIZED);
+            $response = new Response($errorMessage, Response::HTTP_UNAUTHORIZED);
         }
 
         $event = new CasAuthenticationFailureEvent($request, $exception, $response);
@@ -103,18 +118,17 @@ class CasAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         return $event->getResponse();
     }
 
+    /**
+     * Remove CAS ticket information from URI
+     * @param Request $request
+     * @return string
+     */
     private function cleanTicketInUri(Request $request) : string
     {
         if ($request->query->has($this->cas_ticket_parameter)) {
             $request->query->remove($this->cas_ticket_parameter);
-            $request->overrideGlobals(); // Require to generate new uri without 'ticket' parameter
+            $request->overrideGlobals(); // Required to generate new uri without 'ticket' parameter
         }
         return $request->getUri();
-    }
-
-
-    public function start(Request $request, AuthenticationException $authException = null): Response
-    {
-        return new RedirectResponse($this->cas_login_url.'?'.$this->cas_service_parameter.'='.urlencode($request->getUri()));
     }
 }
