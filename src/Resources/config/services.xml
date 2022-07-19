@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults autowire="true" autoconfigure="true" />
+
+        <service id="univ_lorraine_symfony_cas.authentication_controller"
+                 class="UnivLorraine\Bundle\SymfonyCasBundle\Controller\AuthenticationController"
+                 public="true">
+            <call method="setContainer">
+                <argument type="service" id="Psr\Container\ContainerInterface" />
+            </call>
+            <tag name="container.service_subscriber" />
+        </service>
+
+        <service id="univ_lorraine_symfony_cas.authentication_service"
+                 class="UnivLorraine\Bundle\SymfonyCasBundle\Services\CasAuthenticationService"
+                 public="false">
+            <argument key="$config" />
+            <argument key="$env">%kernel.environment%</argument>
+
+        </service>
+        <service id="UnivLorraine\Bundle\SymfonyCasBundle\Services\CasAuthenticationService"
+                 alias="univ_lorraine_symfony_cas.authentication_service" />
+    </services>
+</container>

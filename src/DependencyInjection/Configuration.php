@@ -7,6 +7,9 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    const CAS_VERSION_3_0 = '3.0';
+    const CAS_VERSION_2_0 = '2.0';
+    const CAS_VERSION_1_0 = '1.0';
     /**
      * {@inheritdoc}
      */
@@ -16,13 +19,41 @@ class Configuration implements ConfigurationInterface
 
         $treeBuilder->getRootNode()
             ->children()
-                ->scalarNode('cas_login_url')->end()
-                ->scalarNode('cas_service_validate_url')->end()
-                ->scalarNode('cas_logout_url')->end()
-                ->scalarNode('cas_ticket_parameter')->defaultValue('ticket')->end()
-                ->scalarNode('cas_service_parameter')->defaultValue('service')->end()
-                ->scalarNode('xml_cas_namespace')->defaultValue('cas')->end()
-                ->scalarNode('xml_username_attribute')->defaultValue('user')->end()
+                ->scalarNode('cas_url')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                    ->example('casserver.herokuapp.com')
+                    ->info('Main url of the CAS Server.')
+                ->end()
+                ->scalarNode('cas_context')
+                    ->example('/cas')
+                    ->info('Request path of the CAS Server.')
+                ->end()
+                ->scalarNode('cas_port')
+                    ->cannotBeEmpty()
+                    ->defaultValue(443)
+                    ->example('443')
+                    ->info('Port of the CAS Server')
+                ->end()
+                ->scalarNode('cas_logout_path')
+                    ->defaultValue('/logout')
+                    ->example('/logout')
+                    ->info('CAS Server path for logging out.')
+                ->end()
+                ->scalarNode('cas_logout_redirect')
+                    ->example('home')
+                    ->info('Route or URL to redirect after successful logout.')
+                ->end()
+                ->enumNode('cas_version')
+                    ->values([
+                        self::CAS_VERSION_3_0,
+                        self::CAS_VERSION_2_0,
+                        self::CAS_VERSION_1_0,
+                    ])
+                    ->defaultValue(self::CAS_VERSION_2_0)
+                    ->example('2.0')
+                    ->info('Version of the CAS Server.')
+                ->end()
             ->end()
         ;
 

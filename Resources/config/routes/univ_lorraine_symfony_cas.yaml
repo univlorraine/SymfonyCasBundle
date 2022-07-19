@@ -1,0 +1,3 @@
+_symfony_cas:
+  resource: '@UnivLorraineSymfonyCasBundle/Resources/config/routes.xml'
+  prefix: /cas
