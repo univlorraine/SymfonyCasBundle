@@ -11,6 +11,7 @@ class CasAuthenticationService
     private string $cas_url;
     private string $cas_context;
     private int $cas_port;
+    private string $cas_login_redirect;
     private string $cas_logout_path;
     private string $cas_logout_redirect;
     private string $cas_version;
@@ -21,6 +22,7 @@ class CasAuthenticationService
         $this->cas_url = $config['cas_url'];
         $this->cas_context = (string) $config['cas_context'];
         $this->cas_port = (int) $config['cas_port'];
+        $this->cas_login_redirect =  ltrim($config['cas_login_redirect'], '/\\');
         $this->cas_logout_path = ltrim($config['cas_logout_path'], '/\\');
         $this->cas_logout_redirect = $config['cas_logout_redirect'] ?: '';
         $this->cas_version = $config['cas_version'];
@@ -54,6 +56,11 @@ class CasAuthenticationService
     {
         $this->initCas();
         return phpCAS::getServerLoginURL();
+    }
+
+    public function getLoginRedirectUrl(): string
+    {
+        return $this->cas_login_redirect;
     }
 
     public function authenticate(): ?string
