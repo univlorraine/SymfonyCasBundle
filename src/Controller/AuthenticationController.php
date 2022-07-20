@@ -18,7 +18,7 @@ class AuthenticationController extends AbstractController
         $login_url = $this->removePathServiceFromLoginUrl($login_url) .
             urlencode($request->getSchemeAndHttpHost() . '/' . $casService->getLoginRedirectUrl());
 
-        return new RedirectResponse('/' . $casService->getLoginRedirectUrl());
+        return new RedirectResponse($login_url);
     }
 
     public function logout(Request $request): Response
