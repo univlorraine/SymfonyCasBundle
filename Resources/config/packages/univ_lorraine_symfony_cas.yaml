@@ -1,5 +1,5 @@
 univ_lorraine_symfony_cas:
-  cas_url: ~ # required
+  cas_url: my-cas-server-url.domain.tld # required
   cas_context: ~ # optional (example: /cas)
   cas_port: 443 # optional (default: 443)
   cas_ca_cert: ~ # optional
