@@ -11,6 +11,7 @@ class CasAuthenticationService
     private string $cas_url;
     private string $cas_context;
     private int $cas_port;
+    private string $cas_ca_cert;
     private string $cas_login_redirect;
     private string $cas_logout_redirect;
     private string $cas_version;
@@ -21,6 +22,7 @@ class CasAuthenticationService
         $this->cas_url = $config['cas_url'];
         $this->cas_context = (string) $config['cas_context'];
         $this->cas_port = (int) $config['cas_port'];
+        $this->cas_ca_cert = (string) $config['cas_ca_cert'];
         $this->cas_login_redirect =  ltrim($config['cas_login_redirect'], '/\\');
         $this->cas_logout_redirect = $config['cas_logout_redirect'] ?: '';
         $this->cas_version = $config['cas_version'];
@@ -48,8 +50,12 @@ class CasAuthenticationService
                 true
             );
 
-            // disable SSL validation of the CAS Server (not recommended in prod)
-            phpCAS::setNoCasServerValidation();
+            // Check if a certificate is set up
+            if ($this->cas_ca_cert && "" !== $this->cas_ca_cert) {
+                phpCAS::setCasServerCACert($this->cas_ca_cert);
+            } else {
+                phpCAS::setNoCasServerValidation();
+            }
         }
     }
 
@@ -79,6 +85,9 @@ class CasAuthenticationService
     public function authenticate(): ?string
     {
         $this->initCas();
+
+
+
         phpCAS::forceAuthentication();
 
         return phpCAS::getUser() ?: null;
