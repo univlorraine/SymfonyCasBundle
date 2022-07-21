@@ -20,5 +20,10 @@
     "psr-4": {
       "UnivLorraine\\Bundle\\SymfonyCasBundle\\": "src/"
     }
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": "true"
+    }
   }
 }
