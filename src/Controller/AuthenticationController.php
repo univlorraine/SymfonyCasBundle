@@ -5,9 +5,7 @@ namespace UnivLorraine\Bundle\SymfonyCasBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use UnivLorraine\Bundle\SymfonyCasBundle\Services\CasAuthenticationService;
-
 
 class AuthenticationController extends AbstractController
 {
@@ -15,20 +13,19 @@ class AuthenticationController extends AbstractController
     {
         $login_url = $casService->getCasLoginUrl();
 
-        $login_url = $this->removePathServiceFromLoginUrl($login_url) .
+        $login_url = $this->removePathServiceFromLoginUrl($login_url, 'service') .
             urlencode($request->getSchemeAndHttpHost() . '/' . $casService->getLoginRedirectUrl());
 
         return new RedirectResponse($login_url);
     }
 
-    public function logout(Request $request): Response
+    public function logout(Request $request, CasAuthenticationService $casService): void
     {
-        dd('in logout function');
-        // logout from cas
+        $casService->logout();
     }
 
-    private function removePathServiceFromLoginUrl($url): string
+    private function removePathServiceFromLoginUrl($url, $service_name): string
     {
-        return substr($url, 0, (int) strpos($url, 'service=') + strlen('service='));
+        return substr($url, 0, (int) strpos($url, $service_name . '=') + strlen($service_name . '='));
     }
 }

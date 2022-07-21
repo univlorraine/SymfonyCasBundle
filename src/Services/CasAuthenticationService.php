@@ -12,7 +12,6 @@ class CasAuthenticationService
     private string $cas_context;
     private int $cas_port;
     private string $cas_login_redirect;
-    private string $cas_logout_path;
     private string $cas_logout_redirect;
     private string $cas_version;
 
@@ -23,13 +22,15 @@ class CasAuthenticationService
         $this->cas_context = (string) $config['cas_context'];
         $this->cas_port = (int) $config['cas_port'];
         $this->cas_login_redirect =  ltrim($config['cas_login_redirect'], '/\\');
-        $this->cas_logout_path = ltrim($config['cas_logout_path'], '/\\');
         $this->cas_logout_redirect = $config['cas_logout_redirect'] ?: '';
         $this->cas_version = $config['cas_version'];
         $this->env = $env;
     }
 
-    protected function initCas()
+    /**
+     * phpCAS Client initialization
+     */
+    protected function initCas(): void
     {
         // Initialize phpCAS if not
         if (!phpCAS::isInitialized()) {
@@ -52,17 +53,29 @@ class CasAuthenticationService
         }
     }
 
+    /**
+     * Ask phpCAS client for login url with service attribute
+     * @return string
+     */
     public function getCasLoginUrl(): string
     {
         $this->initCas();
         return phpCAS::getServerLoginURL();
     }
 
+    /**
+     * Return url to redirect to after the user logged in
+     * @return string
+     */
     public function getLoginRedirectUrl(): string
     {
         return $this->cas_login_redirect;
     }
 
+    /**
+     * Authenticate the user
+     * @return string|null
+     */
     public function authenticate(): ?string
     {
         $this->initCas();
@@ -71,17 +84,38 @@ class CasAuthenticationService
         return phpCAS::getUser() ?: null;
     }
 
-   public function getAttributes(): ?array
-   {
+    /**
+     * Get additional attributes returned by CAS Server after the user logged in
+     * @return array|null
+     */
+    public function getAttributes(): ?array
+    {
        if (phpCAS::isInitialized()) {
            return phpCAS::getAttributes();
        }
        return null;
-   }
+    }
 
-   public function isAuthenticated(): bool
-   {
+    /**
+     * Return if the user is authenticated or not from CAS
+     * @return bool
+     */
+    public function isAuthenticated(): bool
+    {
        return phpCAS::isAuthenticated();
-   }
+    }
+
+    /**
+     * Logout the user
+     */
+    public function logout(): void
+    {
+       $this->initCas();
+       if ($this->cas_logout_redirect && "" !== $this->cas_logout_redirect) {
+           phpCAS::logoutWithRedirectService($this->cas_logout_redirect);
+       } else {
+           phpCAS::logout();
+       }
+    }
 
 }

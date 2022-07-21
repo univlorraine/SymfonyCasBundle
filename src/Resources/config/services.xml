@@ -5,7 +5,7 @@
         https://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <defaults autowire="true" autoconfigure="true" />
+        <defaults autowire="true" autoconfigure="true" public="false" />
 
         <service id="univ_lorraine_symfony_cas.authentication_controller"
                  class="UnivLorraine\Bundle\SymfonyCasBundle\Controller\AuthenticationController"
@@ -21,8 +21,8 @@
                  public="false">
             <argument key="$config" />
             <argument key="$env">%kernel.environment%</argument>
-
         </service>
+
         <service id="UnivLorraine\Bundle\SymfonyCasBundle\Services\CasAuthenticationService"
                  alias="univ_lorraine_symfony_cas.authentication_service" />
     </services>
