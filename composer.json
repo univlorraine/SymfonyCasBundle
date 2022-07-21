@@ -1,7 +1,7 @@
 {
   "name": "univlorraine/symfony-cas-bundle",
   "type": "symfony-bundle",
-  "description": "Symfony 5.4+ bundle for CAS Authentication",
+  "description": "Symfony 5.4+ bundle for CAS Authentication wrapping phpCAS lib from Apereo",
   "keywords": ["CAS", "SSO", "Authentication", "Université de Lorraine", "Symfony"],
   "license": "CECILL-2.1",
   "authors": [
