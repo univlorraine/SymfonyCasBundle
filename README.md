@@ -165,7 +165,6 @@ class AuthenticationFailureListener {
 services:
   ...
 
-  ## Permet de rediriger les utilisateurs non autorisés vers la page 403
   App\Event\AuthenticationFailureListener:
     tags:
       - { name: kernel.event_listener, event: univ_lorraine_symfony_cas.authentication_failure, method: onAuthenticationFailureResponse }
