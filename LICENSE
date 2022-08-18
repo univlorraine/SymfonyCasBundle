@@ -1,7 +1,6 @@
 Copyright or © or Copr. Université de Lorraine - 2022
 
 Benjamin Lemoine - benjamin.lemoine@univ-lorraine.fr
-Stéphane Muller - stephane.muller@univ-lorraine.fr
 
 This software is a computer program whose purpose is to provide a SSO
 CAS Authentication for the Symfony Framework.
