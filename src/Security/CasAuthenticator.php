@@ -52,10 +52,7 @@ class CasAuthenticator extends AbstractAuthenticator implements AuthenticationEn
     public function supports(Request $request): ?bool
     {
         // If user already connected, skip the CAS auth
-        if ($this->security->getUser())
-            return false;
-
-        return true;
+        return !$this->security->getUser();
     }
 
     /**
