@@ -111,7 +111,7 @@ The CAS Server can return additional attributes in addition to the main attribut
 When the user is authenticated, it is possible to get these attributes through the security token of Symfony:
 
 ```php
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 public function myFunction (Security $security) {
     $user_attributes = $security->getToken()->getAttributes();
