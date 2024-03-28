@@ -34,6 +34,7 @@ univ_lorraine_symfony_cas:
   cas_url: my-cas-server-url.domain.tld # required
   cas_context: ~ # optional (eg: /cas)
   cas_port: 443 # optional (default: 443)
+  cas_service_base_url: https://yourapp.domain.com # required
   cas_ca_cert: ~ # optional
   cas_login_redirect: / # optional (default: /)
   cas_logout_redirect: ~ # optional (must be a public area)
@@ -43,6 +44,7 @@ univ_lorraine_symfony_cas:
 * **cas_url**: CAS server url (HTTP(S) scheme is not required).
 * **cas_context**: possible additional path to access CAS Server if not root (eg: my-cas.cas.com/cas).
 * **cas_port**: server port. If not set, the bundle will use default 443 port.
+* **cas_service_base_url**: Url of the running app
 * **cas_ca_cert**: path to the SSL CA Certificate.
 * **cas_login_redirect**: the path the user will be redirected to after he logged in successfully.
   (*It is only triggered when the user goes through the /login url, 
