@@ -4,6 +4,6 @@
         xsi:schemaLocation="http://symfony.com/schema/routing
         http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="univ_lorraine_symfony_cas.login" controller="univ_lorraine_symfony_cas.authentication_controller:login" path="/login" />
-    <route id="univ_lorraine_symfony_cas.logout" controller="univ_lorraine_symfony_cas.authentication_controller:logout" path="/logout" />
+    <route id="univ_lorraine_symfony_cas.login" controller="univ_lorraine_symfony_cas.authentication_controller::login" path="/login" />
+    <route id="univ_lorraine_symfony_cas.logout" controller="univ_lorraine_symfony_cas.authentication_controller::logout" path="/logout" />
 </routes>
