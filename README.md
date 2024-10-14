@@ -39,6 +39,7 @@ univ_lorraine_symfony_cas:
   cas_login_redirect: / # optional (default: /)
   cas_logout_redirect: ~ # optional (must be a public area)
   cas_version: "3.0" # optional (default: 2.0)
+  public_access_regex : ~ # a regex that match publicly accessible URLs but give user if authenticated
 ```
 
 * **cas_url**: CAS server url (HTTP(S) scheme is not required).
@@ -52,6 +53,7 @@ otherwise he will be automatically redirected to the url he requested, after he 
 * **cas_logout_redirect**: the path or url the user will be redirected to after he logged out.
 If not set, the user will be redirected to the CAS Server success logout page.
 * **cas_version**: the version of the CAS Server used.
+* **public_access_regex**: a regex with public_access URls declared in security.yaml for which you want to retrieve the user (if authenticated)
 
 ## Routes configuration
 
