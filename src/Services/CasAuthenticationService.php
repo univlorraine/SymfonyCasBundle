@@ -16,7 +16,7 @@ class CasAuthenticationService
     private string $cas_login_redirect;
     private string $cas_logout_redirect;
     private string $cas_version;
-
+    public string $public_access_regex;
 
     public function __construct(array $config, string $env)
     {
@@ -28,6 +28,7 @@ class CasAuthenticationService
         $this->cas_login_redirect =  ltrim($config['cas_login_redirect'], '/\\');
         $this->cas_logout_redirect = $config['cas_logout_redirect'] ?: '';
         $this->cas_version = $config['cas_version'];
+        $this->public_access_regex = $config['public_access_regex'] ?: '';
         $this->env = $env;
     }
 
