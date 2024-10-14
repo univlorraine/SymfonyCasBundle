@@ -66,6 +66,11 @@ class Configuration implements ConfigurationInterface
                     ->example('2.0')
                     ->info('Version of the CAS Server.')
                 ->end()
+                ->scalarNode('public_access_regex')
+                    ->defaultValue('')
+                    ->example('#^/(public|other/(sub1|sub2))$#')
+                    ->info('a regex that match publicly accessible URLs but give user if authenticated')
+                ->end()
             ->end()
         ;
 
